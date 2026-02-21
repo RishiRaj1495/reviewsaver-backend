@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ReviewSaver - Dynamic Reviews</title>
+    <style>
+        body { font-family: Arial; padding: 20px; max-width: 800px; margin: auto; }
+        .section { border: 1px solid #ccc; padding: 20px; margin: 20px 0; border-radius: 10px; }
+        input, select, textarea { width: 100%; padding: 8px; margin: 5px 0; }
+        button { background: #4CAF50; color: white; padding: 10px; border: none; cursor: pointer; margin: 5px; }
+        .review { border: 1px solid #ddd; padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .rating { color: gold; font-size: 20px; }
+        .vote-btn { background: #f0f0f0; color: black; margin-right: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🎬 ReviewSaver Dynamic Dashboard</h1>
+    
+    <!-- Section 1: Post New Review -->
+    <div class="section">
+        <h2>📝 Write a Review</h2>
+        <input type="number" id="userId" placeholder="User ID" value="1">
+        <input type="text" id="productName" placeholder="Product Name" value="Avengers">
+        <select id="category">
+            <option value="movies">Movies</option>
+            <option value="electronics">Electronics</option>
+            <option value="restaurants">Restaurants</option>
+            <option value="cafes">Cafes</option>
+        </select>
+        <input type="number" id="rating" min="1" max="5" placeholder="Rating (1-5)" value="5">
+        <textarea id="reviewText" placeholder="Your review...">Awesome movie!</textarea>
+        <button onclick="postReview()">Submit Review</button>
+        <div id="postResult"></div>
+    </div>
+
+    <!-- Section 2: Filter Reviews -->
+    <div class="section">
+        <h2>🔍 Filter Reviews</h2>
+        <input type="text" id="filterCategory" placeholder="Category (movies, electronics...)" value="movies">
+        <button onclick="filterByCategory()">Filter</button>
+        <button onclick="loadAllReviews()">Show All</button>
+    </div>
+
+    <!-- Section 3: Display Reviews -->
+    <div class="section">
+        <h2>📋 Reviews</h2>
+        <div id="reviewsList">Click a button to load reviews...</div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8080/api';
+
+        // Post a new review
+        async function postReview() {
+            const review = {
+                userId: parseInt(document.getElementById('userId').value),
+                productName: document.getElementById('productName').value,
+                category: document.getElementById('category').value,
+                rating: parseInt(document.getElementById('rating').value),
+                reviewText: document.getElementById('reviewText').value
+            };
+
+            try {
+                const res = await fetch(`${API_URL}/reviews`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(review)
+                });
+                const data = await res.json();
+                document.getElementById('postResult').innerHTML = 
+                    '✅ Review posted! ID: ' + data.id;
+                loadAllReviews(); // Refresh the list
+            } catch (err) {
+                document.getElementById('postResult').innerHTML = '❌ Error: ' + err;
+            }
+        }
+
+        // Load all reviews
+        async function loadAllReviews() {
+            try {
+                const res = await fetch(`${API_URL}/reviews`);
+                const reviews = await res.json();
+                displayReviews(reviews);
+            } catch (err) {
+                document.getElementById('reviewsList').innerHTML = 'Error: ' + err;
+            }
+        }
+
+        // Filter by category
+        async function filterByCategory() {
+            const category = document.getElementById('filterCategory').value;
+            try {
+                const res = await fetch(`${API_URL}/reviews/category/${category}`);
+                const reviews = await res.json();
+                displayReviews(reviews);
+            } catch (err) {
+                document.getElementById('reviewsList').innerHTML = 'Error: ' + err;
+            }
+        }
+
+        // Upvote a review
+        async function upvoteReview(id) {
+            await fetch(`${API_URL}/reviews/${id}/upvote`, {method: 'PUT'});
+            loadAllReviews(); // Refresh after upvote
+        }
+
+        // Downvote a review
+        async function downvoteReview(id) {
+            await fetch(`${API_URL}/reviews/${id}/downvote`, {method: 'PUT'});
+            loadAllReviews(); // Refresh after downvote
+        }
+
+        // Display reviews in HTML
+        function displayReviews(reviews) {
+            if (reviews.length === 0) {
+                document.getElementById('reviewsList').innerHTML = 'No reviews found';
+                return;
+            }
+
+            let html = '';
+            reviews.forEach(r => {
+                html += `
+                    <div class="review">
+                        <h3>${r.productName} <small>(${r.category})</small></h3>
+                        <p class="rating">${'⭐'.repeat(r.rating)}</p>
+                        <p><strong>User:</strong> ${r.user?.email || 'User ' + r.user?.id}</p>
+                        <p><em>"${r.reviewText}"</em></p>
+                        <p>
+                            <button class="vote-btn" onclick="upvoteReview(${r.id})">👍 ${r.upvotes}</button>
+                            <button class="vote-btn" onclick="downvoteReview(${r.id})">👎 ${r.downvotes}</button>
+                        </p>
+                        <small>Posted: ${new Date(r.createdAt).toLocaleString()}</small>
+                    </div>
+                `;
+            });
+            document.getElementById('reviewsList').innerHTML = html;
+        }
+
+        // Load reviews when page opens
+        loadAllReviews();
+    </script>
+</body>
+</html>

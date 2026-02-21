@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ReviewSaver API Tester</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        input { padding: 8px; margin: 5px; width: 300px; }
+        button { padding: 10px 20px; background: green; color: white; border: none; cursor: pointer; }
+        pre { background: #f4f4f4; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h2>ReviewSaver Login API Tester</h2>
+    
+    <div>
+        <label>Email:</label><br>
+        <input type="email" id="email" value="rishi@demo.com">
+    </div>
+    
+    <div>
+        <label>Device Hash:</label><br>
+        <input type="text" id="deviceHash" value="rishi789">
+    </div>
+    
+    <button onclick="testLogin()">Test Login</button>
+    
+    <h3>Response:</h3>
+    <pre id="result">Waiting for test...</pre>
+
+    <script>
+        async function testLogin() {
+            const email = document.getElementById('email').value;
+            const deviceHash = document.getElementById('deviceHash').value;
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        deviceHash: deviceHash
+                    })
+                });
+                
+                const data = await response.json();
+                document.getElementById('result').innerHTML = 
+                    '✅ SUCCESS!\n' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('result').innerHTML = 
+                    '❌ ERROR: ' + error;
+            }
+        }
+    </script>
+</body>
+</html>
