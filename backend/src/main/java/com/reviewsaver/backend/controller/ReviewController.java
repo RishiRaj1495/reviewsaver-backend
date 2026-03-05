@@ -6,6 +6,10 @@ import com.reviewsaver.backend.repository.ReviewRepository;
 import com.reviewsaver.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import java.util.List;
 import java.util.Map;
 
@@ -71,5 +75,44 @@ public class ReviewController {
         Review review = reviewRepository.findById(id).orElseThrow();
         review.setDownvotes(review.getDownvotes() + 1);
         return reviewRepository.save(review);
+    }
+    // ================== PAGINATION METHODS ==================
+
+    // GET all reviews with pagination
+    @GetMapping("/paged")
+    public Page<Review> getAllReviewsPaged(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDir) {
+        
+        Sort sort = sortDir.equalsIgnoreCase("desc") 
+            ? Sort.by(sortBy).descending() 
+            : Sort.by(sortBy).ascending();
+        
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return reviewRepository.findAll(pageable);
+    }
+
+    // GET reviews by category with pagination
+    @GetMapping("/category/{category}/paged")
+    public Page<Review> getReviewsByCategoryPaged(
+            @PathVariable String category,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        return reviewRepository.findByCategory(category, pageable);
+    }
+
+    // GET reviews by user with pagination
+    @GetMapping("/user/{userId}/paged")
+    public Page<Review> getReviewsByUserPaged(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        return reviewRepository.findByUserId(userId, pageable);
     }
 }
