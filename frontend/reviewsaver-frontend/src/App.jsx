@@ -8,6 +8,7 @@ import ProfilePage from './pages/ProfilePage';
 import FollowersPage from './pages/FollowersPage';
 import TrendingPage from './pages/TrendingPage';
 import LeaderboardPage from './pages/LeaderboardPage';
+import ReviewDetailPage from './pages/ReviewDetailPage';
 
 function App() {
   
@@ -48,6 +49,7 @@ function App() {
           <Route path="/profile/:id/following" element={<FollowingPage />} />
           <Route path="/trending" element={<TrendingPage />} />
           <Route path="/leaderboard" element={<LeaderboardPage />} />
+          <Route path="/review/:id" element={<ReviewDetailPage />} />
         </Routes>
       </div>
     </BrowserRouter>
