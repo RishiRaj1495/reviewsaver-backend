@@ -105,3 +105,55 @@ export const mockLeaderboard = [
     reviewsCount: 29,
   },
 ];
+
+// Mock recommendations (for "Recommended for You", "Because you liked", etc.)
+export const mockRecommendations = [
+  {
+    id: 201,
+    title: "Dune: Part Two",
+    category: "Movies",
+    rating: 4,
+    image: "https://cdn.theplaylist.net/wp-content/uploads/2023/05/03103744/Dune-part-Two-.jpg",
+    reason: "Because you watched Interstellar",
+  },
+  {
+    id: 202,
+    title: "Oppenheimer",
+    category: "Movies",
+    rating: 5,
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1sInBjX1c4StpDRX-4xrJkmu9cJOW4W-VGA&s",
+    reason: "Trending in Drama",
+  },
+  {
+    id: 203,
+    title: "Dhurandhar",
+    category: "Movie",
+    rating: 5,
+    image: "https://assets-in.bmscdn.com/discovery-catalog/events/et00478890-anhmpuxsbl-landscape.jpg",
+    reason: "Because you liked Revange Movie",
+  },
+  {
+    id: 204,
+    title: "Sony WH-1000XM5",
+    category: "Electronics",
+    rating: 4.5,
+    image: "https://pimwp.s3-accelerate.amazonaws.com/2023/04/image001-12.jpg",
+    reason: "Popular in Electronics",
+  },
+  {
+    id: 205,
+    title: "Blue Bottle Coffee",
+    category: "Food",
+    rating: 4,
+    image: "https://via.placeholder.com/300x200?text=Coffee",
+    reason: "Because you reviewed Starbucks",
+  },
+  {
+    id: 206,
+    title: "The Last of Us",
+    category: "TV Shows",
+    rating: 5,
+    image: "https://via.placeholder.com/300x200?text=TLOU",
+    reason: "Based on your gaming interests",
+  },
+];

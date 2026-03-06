@@ -9,6 +9,7 @@ import FollowersPage from './pages/FollowersPage';
 import TrendingPage from './pages/TrendingPage';
 import LeaderboardPage from './pages/LeaderboardPage';
 import ReviewDetailPage from './pages/ReviewDetailPage';
+import DiscoverPage from './pages/DiscoverPage';
 
 function App() {
   
@@ -50,6 +51,7 @@ function App() {
           <Route path="/trending" element={<TrendingPage />} />
           <Route path="/leaderboard" element={<LeaderboardPage />} />
           <Route path="/review/:id" element={<ReviewDetailPage />} />
+          <Route path="/discover" element={<DiscoverPage />} />
         </Routes>
       </div>
     </BrowserRouter>
