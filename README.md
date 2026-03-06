@@ -1,29 +1,28 @@
-<<<<<<< HEAD
-<div align="center"><h1>🛡️ ReviewSaverAPI </h1><br>Robust RESTful backend API for ReviewSaver - Product review management system</div><br/><h2>✨ <b>Key Features</b></h2><ul><li>🔐 <b>JWT Authentication & Authorization</b></li><li>💾 <b>PostgreSQL/MySQL Database</b></li><li>📝 <b>CRUD operations</b> for Reviews & Products</li><li>🛡️ <b>Input validation & Error handling</b></li><li>📊 <b>RESTful API endpoints</b></li><li>🧪 <b>Unit & Integration tests</b></li></ul><h2>🛠️ <b>Tech Stack</b></h2><table><thead><tr><th>Backend</th><th>Database</th><th>Tools</th><th>Testing</th></tr></thead><tbody><tr><td>Spring Boot 3.x</td><td>PostgreSQL/MySQL</td><td>Maven</td><td>JUnit 5</td></tr><tr><td>Spring Security</td><td>JPA/Hibernate</td><td>Postman</td><td>Mockito</td></tr><tr><td>Spring Data JPA</td><td>Flyway</td><td>VS Code</td><td>Testcontainers</td></tr></tbody></table><h2>🚀 <b>Quick Start</b></h2><h3>📥 <b>Prerequisites</b></h3><ul><li>Java 17+</li><li>Maven 3.8+</li><li>PostgreSQL/MySQL</li></ul><h3>🛠️ <b>Step 1: Clone</b></h3><pre><code>git clone https://github.com/RishiRaj1495/reviewsaver-backend.git
-=======
-<div align="center"> <h1>🛡️ ReviewSaverAPI</h1> <br> Robust RESTful backend API for ReviewSaver - Product review management system**</div><br/><h2>✨ <b>Key Features</b></h2><ul><li>🔐 <b>JWT Authentication & Authorization</b></li><li>💾 <b>PostgreSQL/MySQL Database</b></li><li>📝 <b>CRUD operations</b> for Reviews & Products</li><li>🛡️ <b>Input validation & Error handling</b></li><li>📊 <b>RESTful API endpoints</b></li><li>🧪 <b>Unit & Integration tests</b></li></ul><h2>🛠️ <b>Tech Stack</b></h2><table><thead><tr><th>Backend</th><th>Database</th><th>Tools</th><th>Testing</th></tr></thead><tbody><tr><td>Spring Boot 3.x</td><td>PostgreSQL/MySQL</td><td>Maven</td><td>JUnit 5</td></tr><tr><td>Spring Security</td><td>JPA/Hibernate</td><td>Postman</td><td>Mockito</td></tr><tr><td>Spring Data JPA</td><td>Flyway</td><td>VS Code</td><td>Testcontainers</td></tr></tbody></table><h2>🚀 <b>Quick Start</b></h2><h3>📥 <b>Prerequisites</b></h3><ul><li>Java 17+</li><li>Maven 3.8+</li><li>PostgreSQL/MySQL</li></ul><h3>🛠️ <b>Step 1: Clone</b></h3><pre><code>git clone https://github.com/RishiRaj1495/reviewsaver-backend.git
->>>>>>> upstream/main
-cd reviewsaver-backend</code></pre><h3>📦 <b>Step 2: Build</b></h3><pre><code>mvn clean install</code></pre><h3>🔧 <b>Step 3: Configure DB</b></h3><pre><code>Edit src/main/resources/application.yml
-spring.datasource.url=jdbc:postgresql://localhost:5432/reviewsaver</code></pre><h3>▶️ <b>Step 4: Run</b></h3><pre><code>mvn spring-boot:run
-✅ Server: http://localhost:8080</code></pre><h2>📡 <b>API Endpoints</b></h2><table><thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead><tbody><tr><td>POST</td><td>/api/auth/register</td><td>User registration</td></tr><tr><td>POST</td><td>/api/auth/login</td><td>JWT token</td></tr><tr><td>GET</td><td>/api/products</td><td>All products</td></tr><tr><td>POST</td><td>/api/products/{id}/reviews</td><td>Add review</td></tr><tr><td>GET</td><td>/api/products/{id}/reviews</td><td>Product reviews</td></tr></tbody></table><h2>🔐 <b>Authentication</b></h2><pre><code>curl -X POST http://localhost:8080/api/auth/login \
+<div align="center"><h1>🛡️ ReviewSaverAPI</h1><br/><strong>Robust RESTful backend API for ReviewSaver - Product review management system</strong><br/><br/><img src="https://img.shields.io/badge/Spring%20Boot-3.x-6DB33F?style=for-the-badge&logo=spring&logoColor=white"><img src="https://img.shields.io/badge/Java-17%2B-007396?style=for-the-badge&logo=java&logoColor=white"><img src="https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white"></div><h2>✨ <b>Key Features</b></h2><ul><li>🔐 JWT Authentication & Authorization</li><li>💾 PostgreSQL with JPA/Hibernate</li><li>📝 Full CRUD for Products/Reviews</li><li>🛡️ Input Validation & Error Handling</li><li>📊 REST API + Swagger Docs</li><li>🧪 Unit & Integration Tests</li></ul><h2>🛠️ <b>Tech Stack</b></h2><table><thead><tr><th>Backend</th><th>Database</th><th>Security</th><th>Tools</th></tr></thead><tbody><tr><td>Spring Boot 3.x</td><td>PostgreSQL</td><td>JWT + Spring Security</td><td>Maven/Postman</td></tr><tr><td>Spring Data JPA</td><td>Hibernate</td><td>BCrypt</td><td>VS Code/IntelliJ</td></tr></tbody></table><h2>🚀 <b>Quick Start</b></h2><h3>📥 <b>Prerequisites</b></h3><ul><li>Java 17+</li><li>Maven 3.8+</li><li>PostgreSQL</li></ul><h3>🛠️ <b>Setup Commands</b></h3><pre><code># Clone & Build
+git clone https://github.com/RishiRaj1495/reviewsaver-backend.git
+cd reviewsaver-backend
+mvn clean install
+
+# Configure DB (application.yml)
+spring.datasource.url=jdbc:postgresql://localhost:5432/reviewsaver
+
+# Run
+mvn spring-boot:run
+✅ http://localhost:8080 | Swagger: /swagger-ui.html</code></pre><h2>📡 <b>API Endpoints</b></h2><table><thead><tr><th>Method</th><th>Endpoint</th><th>Auth</th><th>Description</th></tr></thead><tbody><tr><td>POST</td><td>/api/auth/register</td><td>-</td><td>Register user</td></tr><tr><td>POST</td><td>/api/auth/login</td><td>-</td><td>Get JWT</td></tr><tr><td>GET</td><td>/api/products</td><td>✓</td><td>List products</td></tr><tr><td>POST</td><td>/api/products/{id}/reviews</td><td>✓</td><td>Add review</td></tr><tr><td>GET</td><td>/api/products/{id}/reviews</td><td>✓</td><td>View reviews</td></tr></tbody></table><h2>🔐 <b>Auth Example</b></h2><pre><code>curl -X POST http://localhost:8080/api/auth/login \
 -H "Content-Type: application/json" \
 -d '{"username":"test","password":"password"}'</code></pre><h2>📁 <b>Project Structure</b></h2><pre><code>reviewsaver-backend/
 ├── src/main/java/com/reviewsaver/
-│   ├── controller/
-│   ├── service/
-│   ├── repository/
-│   ├── model/
-│   ├── security/
-│   └── ReviewsaverApplication.java
-├── src/main/resources/
-│   └── application.yml
+│   ├── controller/    # REST APIs
+│   ├── service/       # Business Logic
+│   ├── repository/    # JPA Repos
+│   ├── entity/        # Models
+│   └── security/      # JWT Auth
+├── src/main/resources/application.yml
 ├── src/test/
 ├── pom.xml
-└── README.md</code></pre><h2>🧪 <b>Testing</b></h2><pre><code>mvn test
-mvn test -P integration-test</code></pre><h2>☁️ <b>Deployment</b></h2><h3><b>Docker</b></h3><pre><code>FROM openjdk:17-jdk-slim
-COPY target/*.jar app.jar
-<<<<<<< HEAD
-ENTRYPOINT ["java", "-jar", "/app.jar"]</code></pre><h2>🐛 <b>Troubleshooting</b></h2><table><thead><tr><th>Issue</th><th>Solution</th></tr></thead><tbody><tr><td>Port 8080 busy</td><td>server.port=8081</td></tr><tr><td>DB connection failed</td><td>Check application.yml</td></tr><tr><td>JWT 401</td><td>Authorization: Bearer &lt;token&gt;</td></tr></tbody></table><h2>👥 <b>Drafted by:</b></h2><div align="center"><ol><li><b>Rishi Raj</b> (24BCE10149) - Backend Lead + Design + Frontend </li></li><li><b>Arnab Kumar</b> (24BCE11017) - Backend + Database + API</li><li><b>Abhilash Singh</b> (24BCE10706) - Design<li><b>Brotodeep Pal</b> (24BC10477) - Security</li></ol><table><tr>🏫 Computer Science Engineering</td></tr></table><a href="https://github.com/RishiRaj1495"><img src="https://img.shields.io/badge/GitHub-Follow%20Us-181717?style=for-the-badge&logo=github&logoColor=white"></a></div><hr/><div align="center">**🛡️ ReviewSaver Backend** - Spring Boot ❤️<br/>⭐ <b>Star if helpful!</b> | 📊 <b>API Docs:</b> http://localhost:8080/swagger-ui.html<br/><img src="https://img.shields.io/badge/Setup-2min-brightgreen"><img src="https://img.shields.io/badge/Java-17-blue"></div>
-=======
-ENTRYPOINT ["java", "-jar", "/app.jar"]</code></pre><h2>🐛 <b>Troubleshooting</b></h2><table><thead><tr><th>Issue</th><th>Solution</th></tr></thead><tbody><tr><td>Port 8080 busy</td><td>server.port=8081</td></tr><tr><td>DB connection failed</td><td>Check application.yml</td></tr><tr><td>JWT 401</td><td>Authorization: Bearer &lt;token&gt;</td></tr></tbody></table><h2>👥 <b>Drafted by:</b></h2><div align="center"><ol><li><b>Rishi Raj</b> (24BCE10149) - Backend + Design(UI/UX) + Frontend </li><li><b>Arnab Kumar</b> (24BCE11017) - Backend + Database + API</li><li><b>Abhilash Singh</b> (24BCE10706) - Design</li><li><b>Brotodeep Pal</b> (24BC10477) - Security</li></ol><table><tr><td>🌍India</td><td>🏫 Computer Science Engineering</td></tr></table><a href="https://github.com/RishiRaj1495"><img src="https://img.shields.io/badge/GitHub-Follow%20Us-181717?style=for-the-badge&logo=github&logoColor=white"></a></div><hr/><div align="center">**🛡️ ReviewSaver Backend** - Spring Boot ❤️<br/>⭐ <b>Star if helpful!</b> | 📊 <b>API Docs:</b> http://localhost:8080/swagger-ui.html<br/><img src="https://img.shields.io/badge/Setup-2min-brightgreen"><img src="https://img.shields.io/badge/Java-17-blue"></div>
->>>>>>> upstream/main
+└── README.md</code></pre><h2>🧪 <b>Testing & Deployment</b></h2><pre><code># Tests
+mvn test
+
+# Docker
+docker build -t reviewsaver .
+docker run -p 8080:8080 reviewsaver</code></pre><h2>🐛 <b>Troubleshooting</b></h2><table><thead><tr><th>Problem</th><th>Solution</th></tr></thead><tbody><tr><td>Port 8080 busy</td><td>Change server.port=8081</td></tr><tr><td>DB Error</td><td>Check application.yml</td></tr><tr><td>401 Unauthorized</td><td>Add Bearer token</td></tr></tbody></table><h2>👥 <b>Team Credits</b></h2><div align="center"><table><tr><td><b>1. Rishi Raj</b><br/>24BCE10149<br/>Backend + UI/UX + Frontend</td><td><b>2. Arnab Kumar</b><br/>24BCE11017<br/>Backend + Database + API</td></tr><tr><td><b>3. Abhilash Singh</b><br/>24BCE10706<br/>Design + Testing</td><td><b>4. Brotodeep Pal</b><br/>24BC10477<br/>Security + Deployment</td></tr></table><p><strong>🌍 India | 🏫 Computer Science Engineering</strong></p><a href="https://github.com/RishiRaj1495"><img src="https://img.shields.io/badge/GitHub-Follow-181717?style=for-the-badge&logo=github&logoColor=white"></a></div><hr/><div align="center"><strong>🛡️ ReviewSaver Backend</strong><br/>⭐ Star if helpful! \| 📊 <a href="http://localhost:8080/swagger-ui.html">Swagger Docs</a><br/><img src="https://img.shields.io/badge/Setup-2min-brightgreen"></div>
