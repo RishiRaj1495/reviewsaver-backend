@@ -127,7 +127,7 @@ export const mockRecommendations = [
   {
     id: 203,
     title: "Dhurandhar",
-    category: "Movie",
+    category: "Movies",
     rating: 5,
     image: "https://assets-in.bmscdn.com/discovery-catalog/events/et00478890-anhmpuxsbl-landscape.jpg",
     reason: "Because you liked Revange Movie",
