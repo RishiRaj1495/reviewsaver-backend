@@ -1,5 +1,4 @@
 FRONTEND DESCRIPTION 
-Create a new file `frontend-my/README.md` and paste this exactly:
 
 ```markdown
 # 🎬 ReviewSaver Frontend
@@ -108,10 +107,10 @@ Make sure the backend is awake before using the app (first request may take 30-6
 
 Open terminal in VS Code and run:
 
-```powershell
+powershell
 cd C:\Users\ACER\Desktop\reviewsaver\frontend-my
 git add README.md
 git commit -m "Add README for React frontend with login feature"
 git push origin main
-```
+
 
