@@ -1,5 +1,4 @@
-## ✅ **Here's the complete README - Just copy and paste!**
-
+FRONTEND DESCRIPTION 
 Create a new file `frontend-my/README.md` and paste this exactly:
 
 ```markdown
