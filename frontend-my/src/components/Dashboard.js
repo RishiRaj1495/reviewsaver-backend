@@ -2,30 +2,19 @@ import React, { useState, useEffect } from 'react';
 import reviewService from '../services/reviewService';
 import './Dashboard.css';
 
-function Dashboard({ user, onLogout }) {
+function Dashboard({ user }) {
   const [stats, setStats] = useState(null);
-  const [myReviews, setMyReviews] = useState([]);
-  const [page, setPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState(null);
 
   useEffect(() => {
     loadDashboardData();
-  }, [page]);
+  }, []);
 
   const loadDashboardData = async () => {
     setLoading(true);
     try {
-      // Get user stats
       const statsData = await reviewService.getUserStats(user.id);
       setStats(statsData);
-      setProfile(statsData);
-
-      // Get user's reviews
-      const reviewsData = await reviewService.getMyReviews(user.id, page, 5);
-      setMyReviews(reviewsData.content || []);
-      setTotalPages(reviewsData.totalPages || 0);
     } catch (error) {
       console.error('Error loading dashboard:', error);
     } finally {
@@ -34,6 +23,7 @@ function Dashboard({ user, onLogout }) {
   };
 
   const formatDate = (dateString) => {
+    if (!dateString) return 'Unknown';
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
@@ -54,14 +44,11 @@ function Dashboard({ user, onLogout }) {
           <span className="avatar-emoji">👤</span>
         </div>
         <div className="profile-info">
-          <h1>{stats?.email}</h1>
+          <h1>{stats?.email || user.email}</h1>
           <p className="member-since">
-            🗓️ Member since: {stats?.memberSince ? formatDate(stats.memberSince) : 'Unknown'}
+            🗓️ Member since: {stats?.memberSince ? formatDate(stats.memberSince) : formatDate(user.createdAt)}
           </p>
         </div>
-        <button onClick={onLogout} className="logout-dashboard-btn">
-          Logout
-        </button>
       </div>
 
       {/* Stats Cards */}
@@ -82,62 +69,6 @@ function Dashboard({ user, onLogout }) {
           <div className="stat-value">{stats?.totalReviews || 0}</div>
           <div className="stat-label">Reviews Written</div>
         </div>
-      </div>
-
-      {/* My Reviews Section */}
-      <div className="my-reviews-section">
-        <h2>📝 My Reviews</h2>
-        
-        {myReviews.length === 0 ? (
-          <div className="no-reviews-message">
-            <p>You haven't posted any reviews yet.</p>
-            <p>Write your first review using the form on the homepage!</p>
-          </div>
-        ) : (
-          <>
-            <div className="my-reviews-list">
-              {myReviews.map(review => (
-                <div key={review.id} className="my-review-card">
-                  <div className="review-header">
-                    <h3>{review.productName}</h3>
-                    <span className="category-badge">{review.category}</span>
-                  </div>
-                  <div className="review-rating">
-                    {'★'.repeat(review.rating)}{'☆'.repeat(5-review.rating)}
-                  </div>
-                  <p className="review-text">"{review.reviewText}"</p>
-                  <div className="review-footer">
-                    <div className="review-stats">
-                      <span>👍 {review.upvotes}</span>
-                      <span>👎 {review.downvotes}</span>
-                    </div>
-                    <div className="review-date">
-                      📅 {formatDate(review.createdAt)}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {totalPages > 1 && (
-              <div className="pagination">
-                <button
-                  onClick={() => setPage(p => Math.max(0, p-1))}
-                  disabled={page === 0}
-                >
-                  ← Previous
-                </button>
-                <span>Page {page + 1} of {totalPages}</span>
-                <button
-                  onClick={() => setPage(p => Math.min(totalPages-1, p+1))}
-                  disabled={page === totalPages-1}
-                >
-                  Next →
-                </button>
-              </div>
-            )}
-          </>
-        )}
       </div>
     </div>
   );

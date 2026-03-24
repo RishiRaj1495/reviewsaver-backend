@@ -188,4 +188,37 @@ body {
   .logout-btn {
     width: 100%;
   }
+
+  .app-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.content-section {
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.form-section {
+  position: sticky;
+  top: 20px;
+  align-self: start;
+}
+
+.reviews-section {
+  min-width: 0;
+}
+
+@media (max-width: 1024px) {
+  .content-section {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-section {
+    position: static;
+  }
+}
 }

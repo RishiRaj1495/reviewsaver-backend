@@ -44,24 +44,6 @@
   font-size: 0.9rem;
 }
 
-.logout-dashboard-btn {
-  padding: 10px 24px;
-  background: rgba(255,255,255,0.2);
-  color: white;
-  border: 2px solid rgba(255,255,255,0.5);
-  border-radius: 30px;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 500;
-  transition: all 0.3s;
-}
-
-.logout-dashboard-btn:hover {
-  background: white;
-  color: #667eea;
-  border-color: white;
-}
-
 /* Stats Grid */
 .stats-grid {
   display: grid;
