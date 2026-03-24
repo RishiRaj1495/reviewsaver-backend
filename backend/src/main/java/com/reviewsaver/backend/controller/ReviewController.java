@@ -125,4 +125,14 @@ public class ReviewController {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         return reviewRepository.findByProductNameContainingIgnoreCase(q, pageable);
     }
+    // GET reviews by user with pagination (for dashboard)
+    @GetMapping("/user/{userId}/all")
+    public Page<Review> getUserReviewsPaged(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+    
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        return reviewRepository.findByUserId(userId, pageable);
+    }
 }
