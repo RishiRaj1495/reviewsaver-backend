@@ -1,23 +1,101 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# dependencies
+# ============================================
+# DEPENDENCIES
+# ============================================
 /node_modules
 /.pnp
 .pnp.js
+/yarn.lock
+/package-lock.json
 
-# testing
+# ============================================
+# TESTING
+# ============================================
 /coverage
+/.nyc_output
 
-# production
+# ============================================
+# PRODUCTION BUILD
+# ============================================
 /build
+/dist
+/.next
+/out
 
-# misc
-.DS_Store
+# ============================================
+# ENVIRONMENT VARIABLES
+# ============================================
+.env
 .env.local
+.env.development
 .env.development.local
+.env.test
 .env.test.local
+.env.production
 .env.production.local
 
+# ============================================
+# DEBUG LOGS
+# ============================================
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+*.log
+
+# ============================================
+# OS FILES
+# ============================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# ============================================
+# IDE FILES
+# ============================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# ============================================
+# TEMPORARY FILES
+# ============================================
+*.tmp
+*.temp
+*.cache
+
+# ============================================
+# SECURITY
+# ============================================
+*.pem
+*.key
+*.cert
+secrets.json
+
+# ============================================
+# MISC
+# ============================================
+*.bak
+*.orig
+*.log
+*.pid
+*.seed
+*.pid.lock
+
+# ============================================
+# BACKEND FILES (if frontend accidentally has them)
+# ============================================
+*.class
+*.jar
+*.war
+target/

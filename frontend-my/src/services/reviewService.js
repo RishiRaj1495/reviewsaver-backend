@@ -1,6 +1,7 @@
 import API_BASE_URL from '../config';
 
 const reviewService = {
+  // ========== AUTHENTICATION ==========
   login: async (email, deviceHash) => {
     try {
       const response = await fetch(`${API_BASE_URL}/login`, {
@@ -17,12 +18,13 @@ const reviewService = {
     }
   },
 
-  getReviews: async (page = 0, size = 10, category = null) => {
+  // ========== REVIEWS CRUD ==========
+  getReviews: async (page = 0, size = 10, category = null, sortBy = 'createdAt', sortDir = 'desc') => {
     try {
-      let url = `${API_BASE_URL}/reviews/paged?page=${page}&size=${size}`;
+      let url = `${API_BASE_URL}/reviews/paged?page=${page}&size=${size}&sortBy=${sortBy}&sortDir=${sortDir}`;
       
       if (category && category !== 'all') {
-        url = `${API_BASE_URL}/reviews/category/${category}/paged?page=${page}&size=${size}`;
+        url = `${API_BASE_URL}/reviews/category/${category}/paged?page=${page}&size=${size}&sortBy=${sortBy}&sortDir=${sortDir}`;
       }
       
       console.log('Fetching reviews from:', url);
@@ -78,6 +80,7 @@ const reviewService = {
     }
   },
 
+  // ========== VOTING ==========
   upvote: async (reviewId) => {
     try {
       const response = await fetch(`${API_BASE_URL}/reviews/${reviewId}/upvote`, {
@@ -102,7 +105,7 @@ const reviewService = {
     }
   },
 
-  // Get user profile
+  // ========== USER PROFILE ==========
   getUserProfile: async (userId) => {
     try {
       const response = await fetch(`${API_BASE_URL}/users/${userId}`);
@@ -115,7 +118,6 @@ const reviewService = {
     }
   },
 
-  // Get user stats
   getUserStats: async (userId) => {
     try {
       const response = await fetch(`${API_BASE_URL}/users/${userId}/stats`);
@@ -128,7 +130,7 @@ const reviewService = {
     }
   },
 
-  // Get user's own reviews (for dashboard)
+  // ========== USER REVIEWS ==========
   getMyReviews: async (userId, page = 0, size = 10) => {
     try {
       const response = await fetch(`${API_BASE_URL}/reviews/user/${userId}/all?page=${page}&size=${size}`);
@@ -141,7 +143,6 @@ const reviewService = {
     }
   },
 
-  // Get user's reviews sorted by upvotes (most upvoted first)
   getUserReviewsByUpvotes: async (userId, page = 0, size = 10) => {
     try {
       const response = await fetch(`${API_BASE_URL}/reviews/user/${userId}/sorted?sortBy=upvotes&sortDir=desc&page=${page}&size=${size}`);
@@ -154,7 +155,6 @@ const reviewService = {
     }
   },
 
-  // Get user's reviews sorted by downvotes (most downvoted first)
   getUserReviewsByDownvotes: async (userId, page = 0, size = 10) => {
     try {
       const response = await fetch(`${API_BASE_URL}/reviews/user/${userId}/sorted?sortBy=downvotes&sortDir=desc&page=${page}&size=${size}`);
@@ -167,7 +167,6 @@ const reviewService = {
     }
   },
 
-  // Get user's most recent reviews
   getUserReviewsRecent: async (userId, page = 0, size = 10) => {
     try {
       const response = await fetch(`${API_BASE_URL}/reviews/user/${userId}/all?page=${page}&size=${size}`);
@@ -178,6 +177,16 @@ const reviewService = {
       console.error('Get user recent reviews error:', error);
       throw error;
     }
+  },
+
+  // ========== UTILITY ==========
+  generateDeviceHash: () => {
+    let hash = localStorage.getItem('deviceHash');
+    if (!hash) {
+      hash = 'device_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
+      localStorage.setItem('deviceHash', hash);
+    }
+    return hash;
   }
 };
 

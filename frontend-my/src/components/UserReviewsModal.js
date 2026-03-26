@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import reviewService from '../services/reviewService';
 import './UserReviewsModal.css';
 
@@ -7,15 +7,14 @@ function UserReviewsModal({ isOpen, onClose, userId, title, sortType }) {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    if (isOpen && userId) {
-      loadReviews();
-    }
-  }, [isOpen, userId, page, sortType]);
-
-  const loadReviews = async () => {
+  const loadReviews = useCallback(async () => {
+    if (!userId) return;
+    
     setLoading(true);
+    setError(null);
     try {
       let data;
       switch (sortType) {
@@ -33,20 +32,52 @@ function UserReviewsModal({ isOpen, onClose, userId, title, sortType }) {
       }
       setReviews(data.content || []);
       setTotalPages(data.totalPages || 0);
+      setTotalElements(data.totalElements || 0);
     } catch (error) {
       console.error('Error loading reviews:', error);
+      setError('Failed to load reviews. Please try again.');
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId, page, sortType]);
+
+  useEffect(() => {
+    if (isOpen && userId) {
+      loadReviews();
+    }
+  }, [isOpen, userId, page, sortType, loadReviews]);
 
   const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch {
+      return 'Unknown date';
+    }
+  };
+
+  const getSortTypeIcon = () => {
+    switch (sortType) {
+      case 'upvotes':
+        return '⭐';
+      case 'downvotes':
+        return '⚠️';
+      case 'recent':
+        return '🕐';
+      default:
+        return '📝';
+    }
+  };
+
+  const handleRetry = () => {
+    setPage(0);
+    loadReviews();
   };
 
   if (!isOpen) return null;
@@ -55,35 +86,81 @@ function UserReviewsModal({ isOpen, onClose, userId, title, sortType }) {
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>{title}</h2>
-          <button className="modal-close" onClick={onClose}>✖</button>
+          <div className="modal-title-section">
+            <span className="modal-icon">{getSortTypeIcon()}</span>
+            <h2>{title}</h2>
+          </div>
+          <div className="modal-stats">
+            {totalElements > 0 && (
+              <span className="modal-stats-badge">
+                {totalElements} review{totalElements !== 1 ? 's' : ''}
+              </span>
+            )}
+          </div>
+          <button className="modal-close" onClick={onClose} aria-label="Close">
+            ✖
+          </button>
         </div>
         
         <div className="modal-body">
           {loading ? (
-            <div className="loading">Loading reviews...</div>
+            <div className="modal-loading">
+              <div className="modal-spinner"></div>
+              <p>Loading your reviews...</p>
+            </div>
+          ) : error ? (
+            <div className="modal-error">
+              <div className="error-icon">⚠️</div>
+              <p>{error}</p>
+              <button onClick={handleRetry} className="modal-retry-btn">
+                Try Again
+              </button>
+            </div>
           ) : reviews.length === 0 ? (
-            <div className="no-reviews">No reviews found</div>
+            <div className="modal-empty">
+              <div className="empty-icon">📭</div>
+              <h3>No reviews found</h3>
+              <p>You haven't posted any reviews in this category yet.</p>
+              <button onClick={onClose} className="empty-close-btn">
+                Start Writing
+              </button>
+            </div>
           ) : (
             <>
-              <div className="reviews-list">
-                {reviews.map(review => (
-                  <div key={review.id} className="modal-review-card">
-                    <div className="review-header-modal">
-                      <h3>{review.productName}</h3>
-                      <span className="category-badge">{review.category}</span>
-                    </div>
-                    <div className="review-rating">
-                      {'★'.repeat(review.rating)}{'☆'.repeat(5-review.rating)}
-                    </div>
-                    <p className="review-text">"{review.reviewText}"</p>
-                    <div className="review-footer-modal">
-                      <div className="vote-stats">
-                        <span>👍 {review.upvotes}</span>
-                        <span>👎 {review.downvotes}</span>
+              <div className="modal-reviews-list">
+                {reviews.map((review, index) => (
+                  <div 
+                    key={review.id} 
+                    className="modal-review-card"
+                    style={{ animationDelay: `${index * 0.05}s` }}
+                  >
+                    <div className="review-card-header">
+                      <div className="review-product-info">
+                        <h3>{review.productName}</h3>
+                        <span className="modal-category-badge">{review.category}</span>
                       </div>
-                      <div className="review-date">
-                        📅 {formatDate(review.createdAt)}
+                      <div className="review-rating-stars">
+                        {'★'.repeat(review.rating)}
+                        {'☆'.repeat(5 - review.rating)}
+                      </div>
+                    </div>
+                    
+                    <p className="modal-review-text">"{review.reviewText}"</p>
+                    
+                    <div className="review-card-footer">
+                      <div className="modal-vote-stats">
+                        <div className="vote-stat upvote-stat">
+                          <span className="vote-icon">👍</span>
+                          <span className="vote-count">{review.upvotes}</span>
+                        </div>
+                        <div className="vote-stat downvote-stat">
+                          <span className="vote-icon">👎</span>
+                          <span className="vote-count">{review.downvotes}</span>
+                        </div>
+                      </div>
+                      <div className="modal-review-date">
+                        <span className="date-icon">📅</span>
+                        {formatDate(review.createdAt)}
                       </div>
                     </div>
                   </div>
@@ -93,15 +170,20 @@ function UserReviewsModal({ isOpen, onClose, userId, title, sortType }) {
               {totalPages > 1 && (
                 <div className="modal-pagination">
                   <button
-                    onClick={() => setPage(p => Math.max(0, p-1))}
+                    onClick={() => setPage(p => Math.max(0, p - 1))}
                     disabled={page === 0}
+                    className="modal-page-btn"
                   >
                     ← Previous
                   </button>
-                  <span>Page {page + 1} of {totalPages}</span>
+                  <div className="modal-page-info">
+                    <span className="modal-current-page">{page + 1}</span>
+                    <span className="modal-total-pages"> / {totalPages}</span>
+                  </div>
                   <button
-                    onClick={() => setPage(p => Math.min(totalPages-1, p+1))}
-                    disabled={page === totalPages-1}
+                    onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
+                    disabled={page === totalPages - 1}
+                    className="modal-page-btn"
                   >
                     Next →
                   </button>
