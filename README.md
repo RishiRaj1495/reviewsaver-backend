@@ -1,51 +1,209 @@
-<div align="center"><h1>🛡️ ReviewSaverAPI</h1><br/><strong>Robust RESTful backend API for ReviewSaver - Product review management system</strong><br/><br/><img src="https://img.shields.io/badge/Spring%20Boot-3.x-6DB33F?style=for-the-badge&logo=spring&logoColor=white"><img src="https://img.shields.io/badge/Java-17%2B-007396?style=for-the-badge&logo=java&logoColor=white"><img src="https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white">
-<br/><small>Updated March 23, 2026 | Team Project</small></div><h2>✨ <b>Core Features</b></h2><ul><li>🔐 <b>JWT Authentication</b> + Role-Based Access (User/Admin)</li><li>💾 <b>PostgreSQL ORM</b> (JPA/Hibernate)</li><li>📝 <b>Full CRUD</b> Products/Users/Reviews</li><li>🛡️ <b>Input Validation</b> + Global Error Handling</li><li>📊 <b>Swagger API Docs</b> + OpenAPI 3.0</li><li>🧪 <b>85%+ Test Coverage</b> (JUnit + Testcontainers)</li></ul><h2>🛠️ <b>Tech Stack</b></h2><table><thead><tr><th>Backend</th><th>Database</th><th>Security</th><th>Tools</th></tr></thead><tbody><tr><td>Spring Boot 3.2+</td><td>PostgreSQL 15</td><td>Spring Security + JWT</td><td>Maven 3.9</td></tr><tr><td>Spring Data JPA</td><td>Hibernate 6.x</td><td>BCrypt + OAuth2</td><td>Postman/Swagger</td></tr></tbody></table><h2>🚀 <b>Production Setup</b></h2><h3>Prerequisites</h3><pre><code>Java 17+ | Maven 3.8+ | PostgreSQL 15+
-IntelliJ IDEA / VS Code + Extension Pack</code></pre><h3>Quick Start</h3><pre><code>git clone https://github.com/RishiRaj1495/reviewsaver-backend.git
-cd reviewsaver-backend
+<div align="center">
+
+# 🛡️ ReviewSaver Backend API
+
+**RESTful backend API for ReviewSaver — a community-driven product review platform**
+
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.11-6DB33F?style=for-the-badge&logo=spring&logoColor=white)
+![Java](https://img.shields.io/badge/Java-17%2B-007396?style=for-the-badge&logo=java&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white)
+
+<small>Updated March 2026 | Team Project</small>
+
+</div>
+
+## ✨ Core Features
+
+- 🔑 **Device-Hash Authentication** — passwordless login via email + device fingerprint
+- 💾 **PostgreSQL** with JPA/Hibernate and Flyway migrations
+- 📝 **Reviews CRUD** — create, read, upvote, downvote reviews
+- 🔍 **Search & Pagination** — search by product name, paginate and sort results
+- 👤 **User Profiles & Stats** — per-user review counts, upvotes, downvotes
+- 📂 **Category Filtering** — browse reviews by product category
+- 🐳 **Docker-ready** — multi-stage Dockerfile with Java 21 runtime
+
+## 🛠️ Tech Stack
+
+| Backend | Database | Migrations | Tools |
+|---------|----------|------------|-------|
+| Spring Boot 3.5.11 | PostgreSQL 15 | Flyway | Maven 3.9 |
+| Spring Data JPA | Hibernate 6.x | — | Docker |
+| Java 17 (source) / 21 (runtime) | HikariCP connection pool | — | Postman |
+
+## 🚀 Local Setup
+
+### Prerequisites
+
+```
+Java 17+ | Maven 3.8+ | PostgreSQL 15+
+IntelliJ IDEA / VS Code
+```
+
+### Quick Start
+
+```bash
+git clone https://github.com/RishiRaj1495/reviewsaver-backend.git
+cd reviewsaver-backend/backend
+
+# Edit src/main/resources/application.properties (DB credentials if needed)
+# Default: host=localhost, db=reviewdb, user=postgres, password=postgres
+
 mvn clean install
-# Edit application.yml (DB config)
 mvn spring-boot:run
-✅ API: http://localhost:8080
-✅ Swagger: http://localhost:8080/swagger-ui.html</code></pre><h2>📡 <b>API Reference</b></h2><table><thead><tr><th>Method</th><th>Endpoint</th><th>Auth</th><th>Response</th></tr></thead><tbody><tr><td>POST</td><td>/api/auth/register</td><td>-</td><td>201 Created</td></tr><tr><td>POST</td><td>/api/auth/login</td><td>-</td><td>200 {token}</td></tr><tr><td>GET</td><td>/api/products</td><td>JWT</td><td>200 Array[Product]</td></tr><tr><td>POST</td><td>/api/products/{id}/reviews</td><td>JWT</td><td>201 Review</td></tr><tr><td>GET</td><td>/api/products/{id}/reviews</td><td>-</td><td>200 Array[Review]</td></tr></tbody></table><h2>🔐 <b>Auth Flow</b></h2><pre><code># Register
-curl -X POST localhost:8080/api/auth/register \
--H "Content-Type: application/json" \
--d '{"username":"user","email":"user@test.com","password":"pass123"}'
+# ✅ API available at http://localhost:8080
+```
 
-# Login (get JWT)
-curl -X POST localhost:8080/api/auth/login \
--H "Content-Type: application/json" \
--d '{"username":"user","password":"pass123"}'
+## 📡 API Reference
 
-# Protected endpoint
-curl -X GET localhost:8080/api/products \
--H "Authorization: Bearer YOUR_JWT_TOKEN"</code></pre><h2>📁 <b>Project Structure</b></h2><pre><code>reviewsaver-backend/
-├── src/main/java/com/reviewsaver/
-│   ├── controller/     # REST endpoints
-│   ├── dto/           # Request/Response
-│   ├── entity/        # JPA models
-│   ├── repository/    # Spring Data JPA
-│   ├── security/      # JWT filters
-│   └── service/       # Business logic
-├── src/main/resources/
-│   └── application.yml
-├── src/test/          # 85%+ coverage
-├── pom.xml
-└── README.md</code></pre><h2>🧪 <b>Testing & Build</b></h2><pre><code># Unit + Integration Tests
+### Authentication
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/login` | Login or register via email + device hash |
+
+### Reviews
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/reviews` | Submit a new review |
+| GET | `/api/reviews` | Get all reviews |
+| GET | `/api/reviews/paged` | Get all reviews (paginated, sortable) |
+| GET | `/api/reviews/category/{category}` | Get reviews by category |
+| GET | `/api/reviews/category/{category}/paged` | Get reviews by category (paginated) |
+| GET | `/api/reviews/user/{userId}` | Get reviews by user |
+| GET | `/api/reviews/user/{userId}/paged` | Get user reviews (paginated) |
+| GET | `/api/reviews/user/{userId}/sorted` | Get user reviews (paginated + sorted) |
+| GET | `/api/reviews/search?q={term}` | Search reviews by product name |
+| PUT | `/api/reviews/{id}/upvote` | Upvote a review |
+| PUT | `/api/reviews/{id}/downvote` | Downvote a review |
+
+### Users
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/users/{userId}` | Get user profile |
+| GET | `/api/users/{userId}/stats` | Get user stats (reviews, upvotes, downvotes) |
+
+### Pagination Query Params
+
+| Param | Default | Description |
+|-------|---------|-------------|
+| `page` | `0` | Page number (0-indexed) |
+| `size` | `10` | Items per page |
+| `sortBy` | `createdAt` | Sort field |
+| `sortDir` | `desc` | Sort direction (`asc` / `desc`) |
+
+## 🔑 Auth Flow
+
+Authentication is passwordless — users are identified by their **email + device hash** combination.
+
+```bash
+# Login / auto-register (new device creates a new account)
+curl -X POST http://localhost:8080/api/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"user@example.com","deviceHash":"abc123xyz"}'
+
+# Response
+{"userId": 1, "message": "Login successful (new device)"}
+```
+
+## 📁 Project Structure
+
+```
+reviewsaver-backend/
+├── backend/
+│   ├── src/main/java/com/reviewsaver/backend/
+│   │   ├── controller/        # REST endpoints (Auth, Review, User)
+│   │   ├── model/             # JPA entities (User, Review)
+│   │   └── repository/        # Spring Data JPA repositories
+│   ├── src/main/resources/
+│   │   ├── application.properties       # Dev config (local PostgreSQL)
+│   │   ├── application-prod.properties  # Prod config (env vars)
+│   │   └── db/migration/
+│   │       └── V1__create_initial_tables.sql
+│   ├── Dockerfile
+│   └── pom.xml
+├── dataset/
+│   └── synthetic_reviews.csv  # Sample data
+├── scripts/
+│   └── import_csv.py          # Data import utility
+└── README.md
+```
+
+## 🗄️ Database
+
+Database name: **`reviewdb`**
+
+Schema is managed by **Flyway** migrations (`src/main/resources/db/migration/`).
+
+```sql
+-- Core tables
+users   (id, email, device_hash, created_at)
+reviews (id, user_id, product_name, category, rating, review_text, upvotes, downvotes, created_at)
+```
+
+## 🧪 Testing & Build
+
+```bash
+# Run tests
 mvn test
 
-# Coverage Report
-mvn jacoco:report
+# Build JAR
+mvn clean package
 
-# Docker Build
+# Docker build (uses Java 21 runtime)
 docker build -t reviewsaver-backend .
-docker run -p 8080:8080 reviewsaver-backend</code></pre><h2>☁️ <b>Production Deployment</b></h2><pre><code># Docker Compose (Dev + Prod)
-services:
-  app:
-    image: reviewsaver-backend:latest
-    ports: ["8080:8080"]
-    depends_on: [postgres]
-  postgres:
-    image: postgres:15
-    environment:
-      POSTGRES_DB: reviewsaver</code></pre><h2>🐛 <b>Troubleshooting</b></h2><table><thead><tr><th>Issue</th><th>Solution</th></tr></thead><tbody><tr><td>Port 8080 conflict</td><td><code>server.port=8081</code> in yml</td></tr><tr><td>DB connection</td><td>Check <code>application.yml</code></td></tr><tr><td>401 JWT error</td><td><code>Authorization: Bearer &lt;token&gt;</code></td></tr><tr><td>Maven OOM</td><td><code>mvn -Xmx2g clean install</code></td></tr></tbody></table><h2>👥 <b>Development Team</b></h2><div align="center"><table><tr><td><b>1. Rishi Raj</b><br/>24BCE10149<br/>Backend Lead + Frontend</td><td><b>2. Arnab Kumar</b><br/>24BCE11017<br/>API + Database</td></tr><tr><td><b>3. Abhilash Singh</b><br/>24BCE10706<br/>Design + Testing</td><td><b>4. Brotodeep Pal</b><br/>24BC10477<br/>Security + Deploy</td></tr></table><p><strong>🌍 India | 🏫 Computer Science Engineering</strong></p></div><hr/><div align="center"><strong>🛡️ ReviewSaver Backend API</strong> | <b>March 2026 Update</b><br/>⭐ <b>Star if helpful!</b> | 📊 <a href="http://localhost:8080/swagger-ui.html">Live Swagger Docs</a><br/><img src="https://img.shields.io/badge/Status-Live-brightgreen"><img src="https://img.shields.io/badge/Coverage-85%2B-orange"><img src="https://img.shields.io/badge/Response-&lt;50ms-blue"></div>
+docker run -p 8080:8080 \
+  -e DB_URL=jdbc:postgresql://host:5432/reviewdb \
+  -e DB_USERNAME=postgres \
+  -e DB_PASSWORD=postgres \
+  reviewsaver-backend
+```
+
+## 📦 Data Import
+
+To seed the database with sample data:
+
+```bash
+cd scripts
+pip install pandas psycopg2-binary
+python import_csv.py
+```
+
+The script reads `dataset/synthetic_reviews.csv` and imports users and reviews into the local PostgreSQL instance.
+
+## 🐛 Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Port 8080 conflict | Add `server.port=8081` to `application.properties` |
+| DB connection error | Verify credentials in `application.properties` |
+| Flyway migration error | Check `spring.flyway.*` settings; ensure `reviewdb` database exists |
+| Maven out of memory | Run `export MAVEN_OPTS="-Xmx2g"` before `mvn` |
+
+## 👥 Development Team
+
+<div align="center">
+
+| | |
+|---|---|
+| **1. Rishi Raj** · 24BCE10149 · Backend Lead + Frontend | **2. Arnab Kumar** · 24BCE11017 · API + Database |
+| **3. Abhilash Singh** · 24BCE10706 · Design + Testing | **4. Brotodeep Pal** · 24BC10477 · Security + Deploy |
+
+🌍 India &nbsp;|&nbsp; 🏫 Computer Science Engineering
+
+</div>
+
+---
+
+<div align="center">
+
+**🛡️ ReviewSaver Backend API** | March 2026
+⭐ Star if helpful!
+
+![Status](https://img.shields.io/badge/Status-Live-brightgreen)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.11-6DB33F)
+![Java](https://img.shields.io/badge/Java-17%2F21-orange)
+
+</div>
 
