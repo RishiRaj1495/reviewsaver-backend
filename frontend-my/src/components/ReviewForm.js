@@ -65,6 +65,15 @@ function ReviewForm({ user, onReviewAdded }) {
       console.log('Submitting review:', reviewData);
       await reviewService.createReview(reviewData);
       
+      // Update user preferences for better recommendations
+      try {
+        await reviewService.updatePreferences(user.id);
+        console.log('User preferences updated for recommendations');
+      } catch (prefError) {
+        console.error('Failed to update preferences:', prefError);
+        // Don't block the success message if preferences update fails
+      }
+      
       setSuccess('✅ Review posted successfully!');
       setProductName('');
       setReviewText('');

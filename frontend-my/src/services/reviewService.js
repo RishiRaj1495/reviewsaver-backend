@@ -179,6 +179,60 @@ const reviewService = {
     }
   },
 
+  // ========== RECOMMENDATION METHODS ==========
+
+  // Get personalized recommendations for user
+  getRecommendations: async (userId) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/reviews/recommendations/${userId}`);
+      const data = await response.json();
+      console.log('Recommendations response:', data);
+      return data;
+    } catch (error) {
+      console.error('Get recommendations error:', error);
+      throw error;
+    }
+  },
+
+  // Get trending reviews
+  getTrending: async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/reviews/trending`);
+      const data = await response.json();
+      console.log('Trending response:', data);
+      return data;
+    } catch (error) {
+      console.error('Get trending error:', error);
+      throw error;
+    }
+  },
+
+  // Track user interaction (view, click, etc.)
+  trackInteraction: async (userId, reviewId, type) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/reviews/track-interaction`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, reviewId, type })
+      });
+      return response.text();
+    } catch (error) {
+      console.error('Track interaction error:', error);
+    }
+  },
+
+  // Update user preferences (call after posting review)
+  updatePreferences: async (userId) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/reviews/update-preferences/${userId}`, {
+        method: 'POST'
+      });
+      return response.text();
+    } catch (error) {
+      console.error('Update preferences error:', error);
+    }
+  },
+
   // ========== UTILITY ==========
   generateDeviceHash: () => {
     let hash = localStorage.getItem('deviceHash');

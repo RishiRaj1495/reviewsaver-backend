@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import reviewService from '../services/reviewService';
+import RecommendationSection from './RecommendationSection';
 import './Dashboard.css';
 
 function Dashboard({ user, onStatsClick, onRefresh }) {
@@ -155,6 +156,9 @@ function Dashboard({ user, onStatsClick, onRefresh }) {
           </span>
         </div>
       </div>
+
+      {/* Recommendation Section - ADDED */}
+      <RecommendationSection userId={user.id} />
     </div>
   );
 }
