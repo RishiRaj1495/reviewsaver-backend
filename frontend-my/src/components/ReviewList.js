@@ -15,25 +15,39 @@ function ReviewList({ user }) {
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortDir, setSortDir] = useState('desc');
   const [votingId, setVotingId] = useState(null);
+  const [activeFilters, setActiveFilters] = useState({
+    minRating: null,
+    maxRating: null,
+    dateRange: null
+  });
+
+  const sortOptions = [
+    { value: 'createdAt', label: 'Date', icon: '🕐' },
+    { value: 'rating', label: 'Rating', icon: '⭐' },
+    { value: 'upvotes', label: 'Upvotes', icon: '👍' },
+    { value: 'downvotes', label: 'Downvotes', icon: '👎' }
+  ];
+
+  const categories = [
+    { value: 'all', label: 'All Categories', icon: '📋' },
+    { value: 'Movies', label: 'Movies', icon: '🎬' },
+    { value: 'Electronics', label: 'Electronics', icon: '📱' },
+    { value: 'Restaurants', label: 'Restaurants', icon: '🍽️' },
+    { value: 'Cafes', label: 'Cafes', icon: '☕' },
+    { value: 'Food', label: 'Food', icon: '🍕' }
+  ];
 
   const loadReviews = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      console.log('Loading reviews - page:', page, 'category:', category, 'sort:', sortBy, sortDir);
-      const data = await reviewService.getReviews(page, 10, category, sortBy, sortDir);
-      console.log('API Response:', data);
-      
+      const data = await reviewService.getReviews(page, 12, category, sortBy, sortDir);
       setReviews(data.content || []);
       setTotalPages(data.totalPages || 0);
       setTotalElements(data.totalElements || 0);
-      
-      if ((data.content || []).length === 0 && page === 0) {
-        console.log('No reviews found');
-      }
     } catch (error) {
       console.error('Error loading reviews:', error);
-      setError('Failed to load reviews. Please refresh.');
+      setError('Failed to load reviews');
     } finally {
       setLoading(false);
     }
@@ -48,34 +62,15 @@ function ReviewList({ user }) {
     setSearching(true);
     setError(null);
     try {
-      console.log('Searching for:', searchTerm);
-      const data = await reviewService.searchReviews(searchTerm, page, 10);
-      console.log('Search results:', data);
-      
+      const data = await reviewService.searchReviews(searchTerm, page, 12);
       setReviews(data.content || []);
       setTotalPages(data.totalPages || 0);
       setTotalElements(data.totalElements || 0);
-      
-      if ((data.content || []).length === 0) {
-        console.log('No results found');
-      }
     } catch (error) {
       console.error('Search error:', error);
       setError('Failed to search reviews');
     } finally {
       setSearching(false);
-    }
-  };
-
-  const handleClearSearch = () => {
-    setSearchTerm('');
-    setPage(0);
-    loadReviews();
-  };
-
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      handleSearch();
     }
   };
 
@@ -87,6 +82,15 @@ function ReviewList({ user }) {
       setSortDir('desc');
     }
     setPage(0);
+  };
+
+  const handleClearFilters = () => {
+    setCategory('all');
+    setSortBy('createdAt');
+    setSortDir('desc');
+    setSearchTerm('');
+    setPage(0);
+    setActiveFilters({ minRating: null, maxRating: null, dateRange: null });
   };
 
   useEffect(() => {
@@ -139,6 +143,22 @@ function ReviewList({ user }) {
     return sortDir === 'desc' ? '↓' : '↑';
   };
 
+  const getActiveFilterCount = () => {
+    let count = 0;
+    if (category !== 'all') count++;
+    if (activeFilters.minRating) count++;
+    if (activeFilters.maxRating) count++;
+    if (activeFilters.dateRange) count++;
+    return count;
+  };
+
+  const formatReviewCount = (count) => {
+    if (count >= 1000) {
+      return `${Math.floor(count / 1000)}K+`;
+    }
+    return count.toString();
+  };
+
   if (loading && reviews.length === 0 && !searching) {
     return (
       <div className="loading-container">
@@ -168,76 +188,79 @@ function ReviewList({ user }) {
 
   return (
     <div className="reviews-container">
+      {/* Header with Stats */}
       <div className="reviews-header">
         <div className="header-left">
           <h1>📋 Reviews</h1>
           <div className="stats-badge">
-            {totalElements.toLocaleString()} reviews
+            {formatReviewCount(totalElements)} reviews
           </div>
         </div>
-        <div className="filter-section">
-          <select 
-            value={category} 
-            onChange={(e) => {
-              setCategory(e.target.value);
-              setPage(0);
-            }}
-            className="category-filter"
-          >
-            <option value="all">All Categories</option>
-            <option value="Movies">🎬 Movies</option>
-            <option value="Electronics">📱 Electronics</option>
-            <option value="Restaurants">🍽️ Restaurants</option>
-            <option value="Cafes">☕ Cafes</option>
-            <option value="Food">🍕 Food</option>
-          </select>
-          <button onClick={loadReviews} className="refresh-btn" title="Refresh">
-            🔄
-          </button>
+      </div>
+
+      {/* Search Bar */}
+      <div className="search-section">
+        <div className="search-wrapper">
+          <span className="search-icon">🔍</span>
+          <input
+            type="text"
+            placeholder="Search reviews by product name..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+            className="search-input"
+          />
+          {searchTerm && (
+            <button onClick={() => { setSearchTerm(''); loadReviews(); }} className="clear-search">
+              ✖
+            </button>
+          )}
+        </div>
+        <button onClick={handleSearch} className="search-btn">
+          Search
+        </button>
+      </div>
+
+      {/* Sort Section */}
+      <div className="sort-section">
+        <span className="sort-label">Sort by:</span>
+        <div className="sort-buttons">
+          {sortOptions.map(option => (
+            <button
+              key={option.value}
+              onClick={() => handleSortChange(option.value)}
+              className={`sort-btn ${sortBy === option.value ? 'active' : ''}`}
+            >
+              {option.icon} {option.label} {getSortIcon(option.value)}
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Sort Options */}
-      <div className="sort-section">
-        <span className="sort-label">Sort by:</span>
-        <button 
-          onClick={() => handleSortChange('createdAt')}
-          className={`sort-btn ${sortBy === 'createdAt' ? 'active' : ''}`}
+      {/* Category Filter with Clear Button */}
+      <div className="category-filter-wrapper">
+        <div className="filter-header">
+          <span className="filter-label">Filter by category:</span>
+          {getActiveFilterCount() > 0 && (
+            <button onClick={handleClearFilters} className="clear-filters-btn">
+              ✖ Clear Filters ({getActiveFilterCount()})
+            </button>
+          )}
+        </div>
+        <select
+          value={category}
+          onChange={(e) => {
+            setCategory(e.target.value);
+            setPage(0);
+          }}
+          className="category-select"
         >
-          Date {getSortIcon('createdAt')}
-        </button>
-        <button 
-          onClick={() => handleSortChange('rating')}
-          className={`sort-btn ${sortBy === 'rating' ? 'active' : ''}`}
-        >
-          Rating {getSortIcon('rating')}
-        </button>
-        <button 
-          onClick={() => handleSortChange('upvotes')}
-          className={`sort-btn ${sortBy === 'upvotes' ? 'active' : ''}`}
-        >
-          Upvotes {getSortIcon('upvotes')}
-        </button>
-      </div>
-
-      {/* Search Bar Section */}
-      <div className="search-section">
-        <input
-          type="text"
-          placeholder="🔍 Search reviews by product name... (e.g., Avengers, iPhone, Pizza)"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          onKeyPress={handleKeyPress}
-          className="search-input"
-        />
-        <button onClick={handleSearch} className="search-btn">
-          🔍 Search
-        </button>
-        {searchTerm && (
-          <button onClick={handleClearSearch} className="clear-btn">
-            ✖ Clear
-          </button>
-        )}
+          {categories.map(cat => (
+            <option key={cat.value} value={cat.value}>
+              {cat.icon} {cat.label}
+            </option>
+          ))}
+        </select>
       </div>
 
       {/* Search Results Info */}
@@ -248,24 +271,27 @@ function ReviewList({ user }) {
         </div>
       )}
 
+      {/* Reviews Grid */}
       {reviews.length === 0 ? (
         <div className="no-reviews">
           <div className="no-reviews-icon">📭</div>
           <p>No reviews found.</p>
-          <p className="no-reviews-hint">Try changing category, search term, or refresh.</p>
+          <p className="no-reviews-hint">Try changing category, search term, or clear filters.</p>
         </div>
       ) : (
         <>
           <div className="reviews-grid">
             {reviews.map(review => (
               <div key={review.id} className="review-card">
-                <div className="review-header">
-                  <h3>{review.productName}</h3>
-                  <span className="category-badge">{review.category}</span>
-                </div>
-                
-                <div className="review-rating">
-                  {'★'.repeat(review.rating)}{'☆'.repeat(5-review.rating)}
+                <div className="review-card-top">
+                  <div className="review-header">
+                    <h3>{review.productName}</h3>
+                    <span className="category-badge">{review.category}</span>
+                  </div>
+                  <div className="review-rating">
+                    {'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}
+                    <span className="rating-value">{review.rating}/5</span>
+                  </div>
                 </div>
                 
                 <p className="review-text">"{review.reviewText}"</p>
@@ -301,6 +327,7 @@ function ReviewList({ user }) {
             ))}
           </div>
 
+          {/* Pagination */}
           {totalPages > 0 && (
             <div className="pagination">
               <button 

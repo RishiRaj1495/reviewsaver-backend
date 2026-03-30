@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
+import ProfilePage from './components/ProfilePage';
 import ReviewForm from './components/ReviewForm';
 import ReviewList from './components/ReviewList';
 import UserReviewsModal from './components/UserReviewsModal';
@@ -48,13 +50,12 @@ function App() {
     setUser(null);
     setUserStats(null);
     setStatsError(null);
-    // Clear any cached data
     localStorage.removeItem('deviceHash');
   };
 
   const handleReviewAdded = () => {
     setRefreshKey(prev => prev + 1);
-    loadUserStats(); // Refresh stats after adding review
+    loadUserStats();
   };
 
   const handleStatsClick = (type) => {
@@ -91,76 +92,103 @@ function App() {
 
   const handleLogin = (userData) => {
     setUser(userData);
-    // Welcome message in console (optional)
     console.log(`Welcome ${userData.email}!`);
   };
 
+  if (!user) {
+    return <Login onLogin={handleLogin} />;
+  }
+
   return (
-    <div className="App">
-      <header className="app-header">
-        <div className="header-content">
-          <h1>🎬 ReviewSaver</h1>
-          <p className="tagline">India's #1 Review Platform — Trusted by 50,000+ users</p>
-        </div>
-      </header>
-      
-      <main>
-        {!user ? (
-          <Login onLogin={handleLogin} />
-        ) : (
-          <div className="app-container">
-            {/* Dashboard Section - Clickable Stats with Real Data */}
-            <Dashboard 
-              user={user} 
-              userStats={userStats}
-              loadingStats={loadingStats}
-              statsError={statsError}
-              onStatsClick={handleStatsClick} 
-              onRefresh={loadUserStats}
-            />
-            
-            {/* Combined Content */}
-            <div className="content-section">
-              <div className="form-section">
-                <ReviewForm 
-                  user={user} 
-                  onReviewAdded={handleReviewAdded}
-                />
-              </div>
-              
-              <div className="reviews-section">
-                <ReviewList 
-                  key={refreshKey}
-                  user={user} 
-                />
-              </div>
+    <BrowserRouter>
+      <div className="App">
+        <header className="app-header">
+          <div className="header-content">
+            {/* Logo Section - Left */}
+            <div className="logo-section">
+              <h1>🎬 ReviewSaver</h1>
+              <p className="tagline">India's #1 Review Platform — Trusted by 50,000+ users</p>
             </div>
+            
+            {/* Navigation Section - Right */}
+            <nav className="app-nav">
+              <NavLink 
+                to="/" 
+                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+              >
+                🏠 Dashboard
+              </NavLink>
+              <NavLink 
+                to="/profile" 
+                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+              >
+                👤 My Profile
+              </NavLink>
+              <button onClick={handleLogout} className="logout-nav-btn">
+                🚪 Logout
+              </button>
+            </nav>
           </div>
+        </header>
+        
+        <main>
+          <Routes>
+            <Route path="/" element={
+              <div className="app-container">
+                <Dashboard 
+                  user={user} 
+                  userStats={userStats}
+                  loadingStats={loadingStats}
+                  statsError={statsError}
+                  onStatsClick={handleStatsClick} 
+                  onRefresh={loadUserStats}
+                />
+                <div className="content-section">
+                  <div className="form-section">
+                    <ReviewForm 
+                      user={user} 
+                      onReviewAdded={handleReviewAdded}
+                    />
+                  </div>
+                  <div className="reviews-section">
+                    <ReviewList 
+                      key={refreshKey}
+                      user={user} 
+                    />
+                  </div>
+                </div>
+              </div>
+            } />
+            <Route path="/profile" element={
+              <ProfilePage 
+                user={user} 
+                userStats={userStats} 
+                onRefresh={loadUserStats} 
+              />
+            } />
+          </Routes>
+        </main>
+
+        <UserReviewsModal
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          userId={user?.id}
+          title={modalTitle}
+          sortType={modalSortType}
+        />
+
+        {user && (
+          <button 
+            className="fab" 
+            onClick={() => document.querySelector('.form-section')?.scrollIntoView({ behavior: 'smooth' })}
+            title="Write a review"
+          >
+            ✍️
+          </button>
         )}
-      </main>
-
-      {/* Modal for viewing user's reviews */}
-      <UserReviewsModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        userId={user?.id}
-        title={modalTitle}
-        sortType={modalSortType}
-      />
-
-      {/* Optional: Floating action button for quick review (optional) */}
-      {user && (
-        <button 
-          className="fab" 
-          onClick={() => document.querySelector('.form-section')?.scrollIntoView({ behavior: 'smooth' })}
-          title="Write a review"
-        >
-          ✍️
-        </button>
-      )}
-    </div>
+      </div>
+    </BrowserRouter>
   );
 }
 
 export default App;
-

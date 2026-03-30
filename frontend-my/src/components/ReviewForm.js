@@ -11,14 +11,21 @@ function ReviewForm({ user, onReviewAdded }) {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [charCount, setCharCount] = useState(0);
+  const [productCharCount, setProductCharCount] = useState(0);
 
   const categories = [
-    { value: 'Movies', label: '🎬 Movies', emoji: '🎬' },
-    { value: 'Electronics', label: '📱 Electronics', emoji: '📱' },
-    { value: 'Restaurants', label: '🍽️ Restaurants', emoji: '🍽️' },
-    { value: 'Cafes', label: '☕ Cafes', emoji: '☕' },
-    { value: 'Food', label: '🍕 Food', emoji: '🍕' }
+    { value: 'Movies', label: 'Movies', icon: '🎬', emoji: '🎬', color: '#e74c3c' },
+    { value: 'Electronics', label: 'Electronics', icon: '📱', emoji: '📱', color: '#3498db' },
+    { value: 'Restaurants', label: 'Restaurants', icon: '🍽️', emoji: '🍽️', color: '#e67e22' },
+    { value: 'Cafes', label: 'Cafes', icon: '☕', emoji: '☕', color: '#9b59b6' },
+    { value: 'Food', label: 'Food', icon: '🍕', emoji: '🍕', color: '#27ae60' }
   ];
+
+  const handleProductNameChange = (e) => {
+    const text = e.target.value;
+    setProductName(text);
+    setProductCharCount(text.length);
+  };
 
   const handleReviewTextChange = (e) => {
     const text = e.target.value;
@@ -62,24 +69,23 @@ function ReviewForm({ user, onReviewAdded }) {
         reviewText: reviewText.trim()
       };
 
-      console.log('Submitting review:', reviewData);
       await reviewService.createReview(reviewData);
       
-      // Update user preferences for better recommendations
+      // Update user preferences for recommendations
       try {
         await reviewService.updatePreferences(user.id);
-        console.log('User preferences updated for recommendations');
       } catch (prefError) {
         console.error('Failed to update preferences:', prefError);
-        // Don't block the success message if preferences update fails
       }
       
       setSuccess('✅ Review posted successfully!');
       setProductName('');
+      setProductCharCount(0);
       setReviewText('');
       setCharCount(0);
       setRating(5);
       
+      // This calls handleReviewAdded in App.js which triggers loadUserStats()
       if (onReviewAdded) {
         onReviewAdded();
       }
@@ -96,11 +102,28 @@ function ReviewForm({ user, onReviewAdded }) {
   const handleReset = () => {
     if (window.confirm('Are you sure you want to clear the form?')) {
       setProductName('');
+      setProductCharCount(0);
       setReviewText('');
       setCharCount(0);
       setRating(5);
       setCategory('Movies');
       setError('');
+    }
+  };
+
+  const getCategoryIcon = (catValue) => {
+    const cat = categories.find(c => c.value === catValue);
+    return cat ? cat.icon : '📋';
+  };
+
+  const getRatingText = () => {
+    switch(rating) {
+      case 1: return 'Poor';
+      case 2: return 'Fair';
+      case 3: return 'Average';
+      case 4: return 'Good';
+      case 5: return 'Excellent';
+      default: return 'Excellent';
     }
   };
 
@@ -115,7 +138,8 @@ function ReviewForm({ user, onReviewAdded }) {
           disabled={loading}
           title="Clear form"
         >
-          🗑️
+          <span className="reset-icon">🗑️</span>
+          <span className="reset-text">Clear</span>
         </button>
       </div>
       
@@ -123,69 +147,79 @@ function ReviewForm({ user, onReviewAdded }) {
       {success && <div className="success-message">{success}</div>}
       
       <form onSubmit={handleSubmit}>
+        {/* Product Name Field */}
         <div className="form-group">
-          <label>
+          <label className="form-label">
             Product Name <span className="required">*</span>
           </label>
           <input
             type="text"
             value={productName}
-            onChange={(e) => setProductName(e.target.value)}
+            onChange={handleProductNameChange}
             placeholder="e.g., Avengers: Endgame, iPhone 15, Biryani..."
             required
             disabled={loading}
             maxLength={100}
+            className="form-input"
           />
-          <small className="input-hint">
-            {productName.length}/100 characters
-          </small>
+          <div className="char-counter">
+            <span className={`char-count ${productCharCount > 90 ? 'warning' : ''}`}>
+              {productCharCount}/100 characters
+            </span>
+          </div>
         </div>
 
+        {/* Category and Rating Row */}
         <div className="form-row">
           <div className="form-group">
-            <label>
+            <label className="form-label">
               Category <span className="required">*</span>
             </label>
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              required
-              disabled={loading}
-            >
-              {categories.map(cat => (
-                <option key={cat.value} value={cat.value}>
-                  {cat.label}
-                </option>
-              ))}
-            </select>
+            <div className="category-select-wrapper">
+              <span className="category-icon">{getCategoryIcon(category)}</span>
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                required
+                disabled={loading}
+                className="category-select"
+              >
+                {categories.map(cat => (
+                  <option key={cat.value} value={cat.value}>
+                    {cat.icon} {cat.label}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
           <div className="form-group">
-            <label>
+            <label className="form-label">
               Rating <span className="required">*</span>
             </label>
-            <div className="rating-select">
-              {[1, 2, 3, 4, 5].map(num => (
-                <button
-                  key={num}
-                  type="button"
-                  className={`rating-btn ${rating >= num ? 'active' : ''}`}
-                  onClick={() => setRating(num)}
-                  disabled={loading}
-                  title={`${num} star${num !== 1 ? 's' : ''}`}
-                >
-                  ★
-                </button>
-              ))}
+            <div className="rating-container">
+              <div className="rating-stars">
+                {[1, 2, 3, 4, 5].map(num => (
+                  <button
+                    key={num}
+                    type="button"
+                    className={`star-btn ${rating >= num ? 'active' : ''}`}
+                    onClick={() => setRating(num)}
+                    disabled={loading}
+                    title={`${num} star${num !== 1 ? 's' : ''}`}
+                  >
+                    ★
+                  </button>
+                ))}
+              </div>
+              <span className="rating-text">{getRatingText()}</span>
             </div>
-            <small className="input-hint">
-              {rating === 1 ? 'Poor' : rating === 2 ? 'Fair' : rating === 3 ? 'Average' : rating === 4 ? 'Good' : 'Excellent'}
-            </small>
           </div>
         </div>
 
+        {/* Review Text Field */}
         <div className="form-group">
-          <label>
+          <label className="form-label">
             Your Review <span className="required">*</span>
           </label>
           <textarea
@@ -196,9 +230,10 @@ function ReviewForm({ user, onReviewAdded }) {
             required
             disabled={loading}
             maxLength={500}
+            className="form-textarea"
           />
           <div className="char-counter">
-            <span className={charCount > 450 ? 'warning' : ''}>
+            <span className={`char-count ${charCount > 450 ? 'warning' : ''}`}>
               {charCount}/500 characters
             </span>
             {charCount > 450 && charCount <= 500 && (
@@ -207,24 +242,27 @@ function ReviewForm({ user, onReviewAdded }) {
           </div>
         </div>
 
-        <div className="form-actions">
-          <button 
-            type="submit" 
-            className="submit-btn"
-            disabled={loading || productName.trim().length < 3 || reviewText.trim().length < 10}
-          >
-            {loading ? (
-              <>
-                <span className="spinner"></span> Posting...
-              </>
-            ) : (
-              '📝 Post Review'
-            )}
-          </button>
-          
-          <div className="form-tips">
-            <small>✨ Be honest • ✨ Be helpful • ✨ Keep it clean</small>
-          </div>
+        {/* Submit Button */}
+        <button 
+          type="submit" 
+          className="submit-btn"
+          disabled={loading || productName.trim().length < 3 || reviewText.trim().length < 10}
+        >
+          {loading ? (
+            <>
+              <span className="spinner"></span> Posting...
+            </>
+          ) : (
+            '📝 Post Review'
+          )}
+        </button>
+        
+        <div className="form-tips">
+          <span className="tip">✨ Be honest</span>
+          <span className="tip-dot">•</span>
+          <span className="tip">✨ Be helpful</span>
+          <span className="tip-dot">•</span>
+          <span className="tip">✨ Keep it clean</span>
         </div>
       </form>
     </div>
